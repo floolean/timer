@@ -209,20 +209,10 @@ body {
 .timer-strip {
     position: absolute;
     left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 8px;
-    border-radius: 4px;
-    background: var(--timer-color, var(--primary-color));
-}
-
-.timer-strip {
-    position: absolute;
-    left: 0;
-    top: 14px;
-    bottom: 14px;
-    width: 8px;
-    border-radius: 4px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 4px 0 0 4px;
     background: var(--timer-color, var(--primary-color));
 }
 
@@ -233,7 +223,7 @@ body {
     align-items: center;
     min-width: 0;
     position: relative;
-    padding-left: 20px;
+    padding-left: 16px;
     padding-right: 20px;
 }
 
