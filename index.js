@@ -137,7 +137,7 @@ class TimerApp {
             e.stopPropagation();
             
             const button = e.target.closest('button');
-            if (!button) return;
+            if (!button || button.disabled) return;
             
             const timerId = parseInt(button.dataset.timerId);
             const action = button.dataset.action;
@@ -279,12 +279,6 @@ class TimerApp {
             timer.pause();
         } else {
             // If timer is at zero or negative, let it continue into overtime
-            // Pause all other timers
-            this.timers.forEach(t => {
-                if (t.id !== id && t.isRunning) {
-                    t.pause();
-                }
-            });
             this.initAudioContext();
             timer.start();
         }
