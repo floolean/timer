@@ -581,6 +581,16 @@ body {
     }
 }
 
+@media (max-width: 460px) {
+    .timer-display {
+        font-size: 30px;
+    }
+
+    .timer-name {
+        font-size: 14px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation: none !important;
