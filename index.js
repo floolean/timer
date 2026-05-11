@@ -10,7 +10,6 @@ class Timer {
         this.pausedTime = null;
         this.intervalId = null;
         this.hasAlerted = false;
-        this.isAcknowledged = false;
         this.color = color;
     }
 
@@ -31,7 +30,6 @@ class Timer {
         this.pause();
         this.remainingSeconds = this.totalSeconds;
         this.hasAlerted = false;
-        this.isAcknowledged = false;
     }
 
     tick() {
@@ -42,6 +40,7 @@ class Timer {
         if (this.remainingSeconds <= 0 && !this.hasAlerted) {
             this.hasAlerted = true;
             app.playAlert();
+            app.showNotification(this);
             // Force a render when timer elapses to update status
             app.render();
         }
@@ -53,11 +52,8 @@ class Timer {
     }
 
     getStatus() {
-        if (this.remainingSeconds < 0) {
-            return this.isAcknowledged ? 'acknowledged' : 'blinking';
-        }
-        if (this.remainingSeconds === 0) {
-            return this.isAcknowledged ? 'acknowledged' : 'blinking';
+        if (this.remainingSeconds <= 0) {
+            return 'blinking';
         }
         return this.isRunning ? 'active' : 'idle';
     }
@@ -78,7 +74,6 @@ class Timer {
             totalSeconds: this.totalSeconds,
             remainingSeconds: this.remainingSeconds,
             isRunning: false, // Don't persist running state
-            isAcknowledged: this.isAcknowledged,
             color: this.color
         };
     }
@@ -86,7 +81,6 @@ class Timer {
     static fromJSON(data) {
         const timer = new Timer(data.id, data.name, data.totalSeconds, data.color || 'blue');
         timer.remainingSeconds = data.remainingSeconds;
-        timer.isAcknowledged = data.isAcknowledged || false;
         return timer;
     }
 }
@@ -105,6 +99,7 @@ class TimerApp {
     init() {
         this.loadTimers();
         this.attachEventListeners();
+        this.requestNotificationPermission();
         this.render();
     }
 
@@ -120,6 +115,10 @@ class TimerApp {
                 this.selectColor(e.target.dataset.color);
             });
         });
+
+        if (this.selectedColor) {
+            this.selectColor(this.selectedColor);
+        }
 
         // Use event delegation for timer buttons - handle both click and touch
         const handleButtonClick = (e) => {
@@ -139,17 +138,15 @@ class TimerApp {
                 if (!timer) return;
                 
                 const status = timer.getStatus();
-                const isTimedOut = status === 'blinking' || status === 'acknowledged';
+                const isTimedOut = status === 'blinking';
                 
                 if (isTimedOut) {
-                    if (timer.isAcknowledged) {
-                        this.resetTimer(timerId);
-                    } else {
-                        this.acknowledgeTimer(timerId);
-                    }
+                    this.resetTimer(timerId);
                 } else {
                     this.toggleTimer(timerId);
                 }
+            } else if (action === 'reset') {
+                this.resetTimer(timerId);
             }
         };
 
@@ -174,6 +171,48 @@ class TimerApp {
         });
     }
 
+    selectColor(color) {
+        if (!color) return;
+        this.selectedColor = color;
+        document.querySelectorAll('.color-option').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.color === color);
+        });
+    }
+
+    requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().catch(() => {});
+        }
+    }
+
+    showNotification(timer) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') {
+            return;
+        }
+
+        const title = `${timer.name} finished`;
+        const options = {
+            body: timer.remainingSeconds < 0 ? `Overtime ${timer.getDisplayTime()}` : 'Time is up!',
+            tag: `timer-${timer.id}`,
+            renotify: true,
+            silent: true
+        };
+
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready.then(reg => {
+                if (reg && reg.showNotification) {
+                    reg.showNotification(title, options).catch(() => {
+                        new Notification(title, options);
+                    });
+                }
+            }).catch(() => {
+                new Notification(title, options);
+            });
+        } else {
+            new Notification(title, options);
+        }
+    }
+
     addTimer() {
         const name = document.getElementById('timerName').value.trim() || 'Unnamed';
         const hours = Math.max(0, parseInt(document.getElementById('timerHours').value) || 0);
@@ -186,7 +225,7 @@ class TimerApp {
         }
 
         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-        const timer = new Timer(this.nextId++, name, totalSeconds);
+        const timer = new Timer(this.nextId++, name, totalSeconds, this.selectedColor);
         this.timers.push(timer);
         
         // Reset inputs
@@ -242,16 +281,6 @@ class TimerApp {
         }
     }
 
-    acknowledgeTimer(id) {
-        const timer = this.timers.find(t => t.id === id);
-        if (timer) {
-            timer.isAcknowledged = true;
-            this.saveTimers();
-            // Don't render immediately to avoid interfering with button clicks
-            setTimeout(() => this.render(), 10);
-        }
-    }
-
     toggleAddPanel() {
         const panel = document.getElementById('addTimerSection');
         if (panel.classList.contains('active')) {
@@ -284,33 +313,34 @@ class TimerApp {
             }
         }
 
-        // Play a single beep sequence
         try {
-            this.playBeep(800, 150);
-            setTimeout(() => this.playBeep(800, 150), 200);
-            setTimeout(() => this.playBeep(1000, 200), 400);
+            const now = this.audioContext.currentTime;
+            this.playBeep(620, 120, now, 'sine');
+            this.playBeep(820, 120, now + 0.18, 'triangle');
+            this.playBeep(980, 180, now + 0.36, 'sine');
         } catch (e) {
             console.log('Error playing alert', e);
         }
     }
 
-    playBeep(frequency, duration) {
+    playBeep(frequency, duration, startTime, type = 'sine') {
         try {
             const ctx = this.audioContext;
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            
+
             osc.connect(gain);
             gain.connect(ctx.destination);
-            
+
             osc.frequency.value = frequency;
-            osc.type = 'sine';
-            
-            gain.gain.setValueAtTime(0.3, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration / 1000);
-            
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + duration / 1000);
+            osc.type = type;
+
+            gain.gain.setValueAtTime(0.001, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.25, startTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration / 1000);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration / 1000);
         } catch (e) {
             console.log('Error playing beep', e);
         }
@@ -366,51 +396,58 @@ class TimerApp {
             });
 
         if (needsFullRender) {
-            // Full render for new/changed timers
             timersList.innerHTML = this.timers.map(timer => {
                 const status = timer.getStatus();
-                const isTimedOut = status === 'blinking' || status === 'acknowledged';
-                const buttonLabel = isTimedOut ? (timer.isAcknowledged ? 'Reset' : 'Ack') : (timer.isRunning ? 'Pause' : 'Start');
-                const buttonClass = isTimedOut ? (timer.isAcknowledged ? 'btn-reset' : 'btn-ack') : (timer.isRunning ? 'btn-pause' : 'btn-start');
+                const isTimedOut = status === 'blinking';
+                const isPaused = !timer.isRunning && timer.remainingSeconds > 0;
+                const buttonLabel = isTimedOut ? 'Reset' : (timer.isRunning ? 'Pause' : 'Start');
+                const buttonClass = isTimedOut ? 'btn-reset' : (timer.isRunning ? 'btn-pause' : 'btn-start');
+                const style = `--timer-color: var(--color-${timer.color});`;
 
                 return `
-                <div class="timer-card ${status}" data-timer-id="${timer.id}">
+                <div class="timer-card ${status}" data-timer-id="${timer.id}" style="${style}">
                     <button class="timer-delete-btn" data-action="delete" data-timer-id="${timer.id}" title="Delete">✕</button>
-                    
-                    <div class="timer-header">
+                    <div class="timer-strip"></div>
+                    <div class="timer-info">
                         <div class="timer-name">${this.escapeHtml(timer.name)}</div>
+                        <div class="timer-display" data-timer-display="${timer.id}">${timer.getDisplayTime()}</div>
                     </div>
-                    
-                    <div class="timer-display" data-timer-display="${timer.id}">${timer.getDisplayTime()}</div>
-                    
-                    <button class="timer-action-btn ${buttonClass}" data-action="action" data-timer-id="${timer.id}">
-                        ${buttonLabel}
-                    </button>
+                    <div class="timer-sidebar">
+                        <button class="timer-action-btn ${buttonClass}" data-action="action" data-timer-id="${timer.id}">${buttonLabel}</button>
+                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${isPaused ? '' : 'hidden'}>Reset</button>
+                    </div>
                 </div>
                 `;
             }).join('');
         } else {
-            // Just update the displays and statuses for existing timers
             this.timers.forEach(timer => {
                 const card = timersList.querySelector(`[data-timer-id="${timer.id}"]`);
                 if (card) {
                     const display = card.querySelector('.timer-display');
-                    const button = card.querySelector('.timer-action-btn');
-                    
-                    // Update display time
-                    display.textContent = timer.getDisplayTime();
-                    
-                    // Update card status
+                    const actionButton = card.querySelector('.timer-action-btn');
+                    const resetButton = card.querySelector('.timer-reset-btn');
+                    const name = card.querySelector('.timer-name');
+
+                    if (display) {
+                        display.textContent = timer.getDisplayTime();
+                    }
+
                     const status = timer.getStatus();
                     card.className = `timer-card ${status}`;
-                    
-                    // Update button
-                    const isTimedOut = status === 'blinking' || status === 'acknowledged';
-                    const buttonLabel = isTimedOut ? (timer.isAcknowledged ? 'Reset' : 'Ack') : (timer.isRunning ? 'Pause' : 'Start');
-                    const buttonClass = isTimedOut ? (timer.isAcknowledged ? 'btn-reset' : 'btn-ack') : (timer.isRunning ? 'btn-pause' : 'btn-start');
-                    
-                    button.textContent = buttonLabel;
-                    button.className = `timer-action-btn ${buttonClass}`;
+                    card.style.setProperty('--timer-color', `var(--color-${timer.color})`);
+
+                    const isTimedOut = status === 'blinking';
+                    const isPaused = !timer.isRunning && timer.remainingSeconds > 0;
+                    const buttonLabel = isTimedOut ? 'Reset' : (timer.isRunning ? 'Pause' : 'Start');
+                    const buttonClass = isTimedOut ? 'btn-reset' : (timer.isRunning ? 'btn-pause' : 'btn-start');
+
+                    if (actionButton) {
+                        actionButton.textContent = buttonLabel;
+                        actionButton.className = `timer-action-btn ${buttonClass}`;
+                    }
+                    if (resetButton) {
+                        resetButton.hidden = !isPaused;
+                    }
                 }
             });
         }

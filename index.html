@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Simple PWA timer app for iPhone">
     <meta name="theme-color" content="#1e88e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,8 +17,8 @@
 <body>
     <div class="container">
         <header class="header">
-            <button id="toggleAddBtn" class="btn-toggle-add" title="Add timer">+</button>
             <h1>Timers</h1>
+            <button type="button" id="toggleAddBtn" class="btn-toggle-add" title="Add timer">+ Add</button>
         </header>
 
         <main class="main">
@@ -43,39 +43,52 @@
                     maxlength="20"
                 >
             </div>
-            <div class="input-group">
-                <input
-                    id="timerHours"
-                    type="number"
-                    placeholder="Hours"
-                    class="timer-time-input"
-                    min="0"
-                    max="99"
-                    value="0"
-                >
-                <span class="separator">:</span>
-                <input
-                    id="timerMinutes"
-                    type="number"
-                    placeholder="Minutes"
-                    class="timer-time-input"
-                    min="0"
-                    max="59"
-                    value="1"
-                >
-                <span class="separator">:</span>
-                <input
-                    id="timerSeconds"
-                    type="number"
-                    placeholder="Seconds"
-                    class="timer-time-input"
-                    min="0"
-                    max="59"
-                    value="0"
-                >
+            <div class="time-picker">
+                <div class="time-field">
+                    <label for="timerHours">H</label>
+                    <input
+                        id="timerHours"
+                        type="number"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="0"
+                        class="timer-time-input"
+                        min="0"
+                        max="99"
+                        value="0"
+                    >
+                </div>
+                <div class="time-field">
+                    <label for="timerMinutes">M</label>
+                    <input
+                        id="timerMinutes"
+                        type="number"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="00"
+                        class="timer-time-input"
+                        min="0"
+                        max="59"
+                        value="1"
+                    >
+                </div>
+                <div class="time-field">
+                    <label for="timerSeconds">S</label>
+                    <input
+                        id="timerSeconds"
+                        type="number"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        placeholder="00"
+                        class="timer-time-input"
+                        min="0"
+                        max="59"
+                        value="0"
+                    >
+                </div>
             </div>
-            <div class="input-group">
-                <label class="color-label">Color:</label>
+            <div class="color-panel">
+                <span class="color-label">Color:</span>
                 <div class="color-picker">
                     <button type="button" class="color-option" data-color="blue" title="Blue"></button>
                     <button type="button" class="color-option" data-color="red" title="Red"></button>
