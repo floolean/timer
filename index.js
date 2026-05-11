@@ -10,6 +10,7 @@ class Timer {
         this.pausedTime = null;
         this.intervalId = null;
         this.hasAlerted = false;
+        this.lastAlertTime = 0;
         this.color = color;
     }
 
@@ -30,19 +31,27 @@ class Timer {
         this.pause();
         this.remainingSeconds = this.totalSeconds;
         this.hasAlerted = false;
+        this.lastAlertTime = 0;
     }
 
     tick() {
         const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
         this.remainingSeconds = this.totalSeconds - elapsed;
 
-        // Trigger alert once when hitting zero
+        // Trigger initial alert when hitting zero
         if (this.remainingSeconds <= 0 && !this.hasAlerted) {
             this.hasAlerted = true;
             app.playAlert();
             app.showNotification(this);
+            this.lastAlertTime = Date.now();
             // Force a render when timer elapses to update status
             app.render();
+        }
+
+        // Continue alerting every 5 seconds while in overtime
+        if (this.remainingSeconds < 0 && this.isRunning && Date.now() - this.lastAlertTime >= 5000) {
+            app.playAlert();
+            this.lastAlertTime = Date.now();
         }
 
         // Continue ticking if timer is still running (allows negative/overtime)
@@ -74,13 +83,15 @@ class Timer {
             totalSeconds: this.totalSeconds,
             remainingSeconds: this.remainingSeconds,
             isRunning: false, // Don't persist running state
-            color: this.color
+            color: this.color,
+            lastAlertTime: this.lastAlertTime
         };
     }
 
     static fromJSON(data) {
         const timer = new Timer(data.id, data.name, data.totalSeconds, data.color || 'blue');
         timer.remainingSeconds = data.remainingSeconds;
+        timer.lastAlertTime = data.lastAlertTime || 0;
         return timer;
     }
 }
@@ -336,9 +347,10 @@ class TimerApp {
 
         try {
             const now = this.audioContext.currentTime;
-            this.playBeep(620, 120, now, 'sine');
-            this.playBeep(820, 120, now + 0.18, 'triangle');
-            this.playBeep(980, 180, now + 0.36, 'sine');
+            // Three quick beeps (lower frequency)
+            this.playBeep(660, 100, now, 'triangle');
+            this.playBeep(660, 100, now + 0.15, 'triangle');
+            this.playBeep(660, 100, now + 0.3, 'triangle');
         } catch (e) {
             console.log('Error playing alert', e);
         }

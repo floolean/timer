@@ -618,6 +618,20 @@ body {
     }
 }
 
+@media (orientation: landscape) and (min-width: 600px) {
+    .timers-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header {
+        display: none;
+    }
+
+    .container {
+        max-width: none;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation: none !important;
