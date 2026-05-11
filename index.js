@@ -348,9 +348,9 @@ class TimerApp {
         try {
             const now = this.audioContext.currentTime;
             // Three quick beeps (lower frequency)
-            this.playBeep(660, 100, now, 'triangle');
-            this.playBeep(660, 100, now + 0.15, 'triangle');
-            this.playBeep(660, 100, now + 0.3, 'triangle');
+            this.playBeep(220, 100, now, 'triangle');
+            this.playBeep(440, 100, now + 0.15, 'sine');
+            this.playBeep(220, 100, now + 0.3, 'triangle');
         } catch (e) {
             console.log('Error playing alert', e);
         }
