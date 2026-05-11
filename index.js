@@ -399,10 +399,9 @@ class TimerApp {
             timersList.innerHTML = this.timers.map(timer => {
                 const status = timer.getStatus();
                 const isTimedOut = status === 'blinking';
-                const isPaused = !timer.isRunning && timer.remainingSeconds > 0;
                 const buttonLabel = isTimedOut ? 'Reset' : (timer.isRunning ? 'Pause' : 'Start');
                 const buttonClass = isTimedOut ? 'btn-reset' : (timer.isRunning ? 'btn-pause' : 'btn-start');
-                const style = `--timer-color: var(--color-${timer.color});`;
+                const style = `--timer-color: var(--color-${timer.color}); --timer-color-rgb: var(--color-${timer.color}-rgb);`;
 
                 return `
                 <div class="timer-card ${status}" data-timer-id="${timer.id}" style="${style}">
@@ -414,7 +413,7 @@ class TimerApp {
                     </div>
                     <div class="timer-sidebar">
                         <button class="timer-action-btn ${buttonClass}" data-action="action" data-timer-id="${timer.id}">${buttonLabel}</button>
-                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${isPaused ? '' : 'hidden'}>Reset</button>
+                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${timer.isRunning ? 'disabled' : ''}>Reset</button>
                     </div>
                 </div>
                 `;
@@ -435,9 +434,9 @@ class TimerApp {
                     const status = timer.getStatus();
                     card.className = `timer-card ${status}`;
                     card.style.setProperty('--timer-color', `var(--color-${timer.color})`);
+                    card.style.setProperty('--timer-color-rgb', `var(--color-${timer.color}-rgb)`);
 
                     const isTimedOut = status === 'blinking';
-                    const isPaused = !timer.isRunning && timer.remainingSeconds > 0;
                     const buttonLabel = isTimedOut ? 'Reset' : (timer.isRunning ? 'Pause' : 'Start');
                     const buttonClass = isTimedOut ? 'btn-reset' : (timer.isRunning ? 'btn-pause' : 'btn-start');
 
@@ -446,7 +445,7 @@ class TimerApp {
                         actionButton.className = `timer-action-btn ${buttonClass}`;
                     }
                     if (resetButton) {
-                        resetButton.hidden = !isPaused;
+                        resetButton.disabled = timer.isRunning;
                     }
                 }
             });

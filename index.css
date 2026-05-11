@@ -22,6 +22,14 @@
     --color-pink: #d81b60;
     --color-teal: #00897b;
     --color-yellow: #fbc02d;
+    --color-blue-rgb: 30, 136, 229;
+    --color-red-rgb: 229, 57, 53;
+    --color-green-rgb: 67, 160, 71;
+    --color-orange-rgb: 251, 140, 0;
+    --color-purple-rgb: 142, 36, 170;
+    --color-pink-rgb: 216, 27, 96;
+    --color-teal-rgb: 0, 137, 123;
+    --color-yellow-rgb: 251, 192, 45;
 }
 
 html, body {
@@ -146,8 +154,8 @@ body {
 }
 
 .timer-card.blinking {
-    border-color: var(--danger-color);
-    background: #ffebee;
+    border-color: var(--timer-color);
+    background: rgba(var(--timer-color-rgb), 0.1);
     animation: timerBlink 1.2s ease-in-out infinite;
     pointer-events: auto;
 }
@@ -268,6 +276,13 @@ body {
 
 .timer-reset-btn:active {
     transform: scale(0.98);
+}
+
+.timer-reset-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #f4f4f4;
+    color: #8c8c8c;
 }
 
 
