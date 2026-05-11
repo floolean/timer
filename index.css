@@ -1,0 +1,434 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #1e88e5;
+    --success-color: #43a047;
+    --warning-color: #fb8c00;
+    --danger-color: #e53935;
+    --dark: #121212;
+    --light: #f5f5f5;
+    --border: #e0e0e0;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    padding: max(env(safe-area-inset-top), 12px) 16px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.btn-toggle-add {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary-color);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    margin-top: max(env(safe-area-inset-top), 12px);
+}
+
+.btn-toggle-add:active {
+    transform: translateY(-50%) scale(0.95);
+    background: #1565c0;
+}
+
+.main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.timers-list {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--text-secondary);
+}
+
+.empty-state p:first-child {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.empty-hint {
+    font-size: 14px;
+}
+
+/* Timer Card */
+.timer-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    grid-template-rows: auto auto auto;
+    gap: 8px;
+    align-items: stretch;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    position: relative;
+    min-height: 140px;
+    margin-bottom: 8px;
+}
+
+.timer-card.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.2);
+}
+
+.timer-card.blinking {
+    border-color: var(--danger-color);
+    background: #ffebee;
+    animation: timerBlink 1.2s ease-in-out infinite;
+    pointer-events: auto;
+}
+
+.timer-card.blinking * {
+    pointer-events: auto;
+}
+
+.timer-card.acknowledged {
+    border-color: var(--danger-color);
+    background: #fff3e0;
+    animation: none;
+}
+
+@keyframes timerBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.timer-delete-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    z-index: 20;
+}
+
+.timer-delete-btn:active {
+    background: rgba(233, 30, 99, 0.2);
+    color: var(--danger-color);
+}
+
+.timer-header {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 8px 0;
+}
+
+.timer-name {
+    font-size: 18px;
+    font-weight: 700;
+    flex: 1;
+    text-align: center;
+    color: var(--text-primary);
+    margin: 0 8px;
+}
+
+.timer-display {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    font-size: 48px;
+    font-weight: 700;
+    font-family: 'Monaco', 'Courier New', monospace;
+    letter-spacing: 2px;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.timer-card.blinking .timer-display {
+    color: var(--danger-color);
+}
+
+.timer-card.acknowledged .timer-display {
+    color: var(--warning-color);
+}
+
+.timer-action-btn {
+    grid-column: 2 / 3;
+    grid-row: 2 / 4;
+    width: 100px;
+    height: 100px;
+    border: none;
+    border-radius: 12px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto;
+    position: relative;
+    z-index: 10;
+    min-width: 44px;
+    min-height: 44px;
+    pointer-events: auto;
+}
+
+.timer-action-btn:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.timer-card.blinking .timer-action-btn {
+    background: var(--danger-color);
+}
+
+.timer-card.acknowledged .timer-action-btn {
+    background: var(--success-color);
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    touch-action: manipulation;
+}
+
+.btn-small {
+    flex: 0;
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background: var(--light);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:active {
+    background: #eeeeee;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:active {
+    background: #d32f2f;
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-success:active {
+    background: #388e3c;
+}
+
+/* Add Timer Section */
+.add-timer-section {
+    border-top: 1px solid var(--border);
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: var(--light);
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    animation: slideUp 0.3s ease;
+}
+
+.add-timer-section.active {
+    display: flex;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.timer-name-input,
+.timer-time-input {
+    padding: 12px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timer-name-input {
+    flex: 1;
+}
+
+.timer-time-input {
+    width: 50px;
+    text-align: center;
+}
+
+.timer-name-input:focus,
+.timer-time-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+}
+
+.separator {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 2px;
+}
+
+/* Scrolling */
+.main::-webkit-scrollbar {
+    width: 6px;
+}
+
+.main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.main::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 3px;
+}
+
+/* Mobile optimizations */
+@media (max-height: 600px) {
+    .timer-display {
+        font-size: 36px;
+    }
+    
+    .timer-card {
+        min-height: 120px;
+    }
+
+    .timer-action-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
