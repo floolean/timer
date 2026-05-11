@@ -185,6 +185,26 @@ class TimerApp {
         }
     }
 
+    initAudioContext() {
+        if (!window.AudioContext && !window.webkitAudioContext) {
+            return;
+        }
+
+        if (!this.audioContext) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.audioContext = new AudioContext();
+            } catch (e) {
+                console.log('AudioContext initialization failed', e);
+                return;
+            }
+        }
+
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume().catch(() => {});
+        }
+    }
+
     showNotification(timer) {
         if (!('Notification' in window) || Notification.permission !== 'granted') {
             return;
@@ -254,6 +274,7 @@ class TimerApp {
                     t.pause();
                 }
             });
+            this.initAudioContext();
             timer.start();
         }
 
