@@ -639,6 +639,7 @@ body {
     .timer-card {
         min-height: 108px;
         padding: 12px;
+        padding-right: 0px;
     }
 
     .timer-info {
