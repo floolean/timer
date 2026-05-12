@@ -156,7 +156,7 @@ body {
 .timer-card.blinking {
     border-color: var(--timer-color);
     background: rgba(var(--timer-color-rgb), 0.1);
-    animation: timerBlink 1.2s ease-in-out infinite;
+    animation: timerBlink 0.8s ease-in-out infinite;
     pointer-events: auto;
 }
 
@@ -577,6 +577,11 @@ body {
     .timer-action-btn {
         width: 70px;
         height: 70px;
+        font-size: 12px;
+    }
+
+    .timer-reset-btn {
+        width: 70px;
         font-size: 12px;
     }
 }

@@ -10,7 +10,6 @@ class Timer {
         this.pausedTime = null;
         this.intervalId = null;
         this.hasAlerted = false;
-        this.lastAlertTime = 0;
         this.color = color;
     }
 
@@ -31,7 +30,6 @@ class Timer {
         this.pause();
         this.remainingSeconds = this.totalSeconds;
         this.hasAlerted = false;
-        this.lastAlertTime = 0;
     }
 
     tick() {
@@ -41,17 +39,15 @@ class Timer {
         // Trigger initial alert when hitting zero
         if (this.remainingSeconds <= 0 && !this.hasAlerted) {
             this.hasAlerted = true;
-            app.playAlert();
+            app.playThrottledAlert();
             app.showNotification(this);
-            this.lastAlertTime = Date.now();
             // Force a render when timer elapses to update status
             app.render();
         }
 
-        // Continue alerting every 5 seconds while in overtime
-        if (this.remainingSeconds < 0 && this.isRunning && Date.now() - this.lastAlertTime >= 5000) {
-            app.playAlert();
-            this.lastAlertTime = Date.now();
+        // Continue alerting while in overtime
+        if (this.remainingSeconds < 0 && this.isRunning) {
+            app.playThrottledAlert();
         }
 
         // Continue ticking if timer is still running (allows negative/overtime)
@@ -82,16 +78,21 @@ class Timer {
             name: this.name,
             totalSeconds: this.totalSeconds,
             remainingSeconds: this.remainingSeconds,
-            isRunning: false, // Don't persist running state
-            color: this.color,
-            lastAlertTime: this.lastAlertTime
+            isRunning: this.isRunning,
+            startTime: this.startTime,
+            color: this.color
         };
     }
 
     static fromJSON(data) {
         const timer = new Timer(data.id, data.name, data.totalSeconds, data.color || 'blue');
         timer.remainingSeconds = data.remainingSeconds;
-        timer.lastAlertTime = data.lastAlertTime || 0;
+        timer.isRunning = !!data.isRunning;
+        if (timer.isRunning && data.startTime) {
+            timer.startTime = data.startTime;
+        } else if (timer.isRunning) {
+            timer.startTime = Date.now() - (timer.totalSeconds - timer.remainingSeconds) * 1000;
+        }
         return timer;
     }
 }
@@ -104,6 +105,8 @@ class TimerApp {
         this.audioContext = null;
         this.renderScheduled = false;
         this.selectedColor = 'blue';
+        this.lastAlertTime = 0;
+        this.wakeLock = null;
         this.init();
     }
 
@@ -111,6 +114,7 @@ class TimerApp {
         this.loadTimers();
         this.attachEventListeners();
         this.requestNotificationPermission();
+        this.requestWakeLock();
         this.render();
     }
 
@@ -180,6 +184,15 @@ class TimerApp {
         document.getElementById('timerSeconds').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.addTimer();
         });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                this.requestWakeLock();
+            }
+        });
+
+        document.addEventListener('click', () => this.requestWakeLock());
+        document.addEventListener('touchend', () => this.requestWakeLock());
     }
 
     selectColor(color) {
@@ -213,6 +226,34 @@ class TimerApp {
 
         if (this.audioContext.state === 'suspended') {
             this.audioContext.resume().catch(() => {});
+        }
+    }
+
+    async requestWakeLock() {
+        if (!('wakeLock' in navigator)) {
+            return;
+        }
+
+        try {
+            if (!this.wakeLock) {
+                this.wakeLock = await navigator.wakeLock.request('screen');
+                this.wakeLock.addEventListener('release', () => {
+                    this.wakeLock = null;
+                });
+            }
+        } catch (e) {
+            console.log('Wake lock request failed', e);
+        }
+    }
+
+    async releaseWakeLock() {
+        if (this.wakeLock) {
+            try {
+                await this.wakeLock.release();
+            } catch (e) {
+                console.log('Wake lock release failed', e);
+            }
+            this.wakeLock = null;
         }
     }
 
@@ -327,6 +368,13 @@ class TimerApp {
         panel.classList.remove('active');
     }
 
+    playThrottledAlert() {
+        if (Date.now() - this.lastAlertTime >= 5000) {
+            this.lastAlertTime = Date.now();
+            this.playAlert();
+        }
+    }
+
     playAlert() {
         // Try to create sound with Web Audio API
         if (!this.audioContext) {
@@ -396,6 +444,11 @@ class TimerApp {
                 const timers = JSON.parse(data);
                 this.timers = timers.map(t => Timer.fromJSON(t));
                 this.nextId = Math.max(...this.timers.map(t => t.id), 0) + 1;
+                this.timers.forEach(timer => {
+                    if (timer.isRunning) {
+                        timer.tick();
+                    }
+                });
             }
         } catch (e) {
             console.error('Error loading timers', e);
