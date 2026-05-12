@@ -105,12 +105,14 @@ class TimerApp {
         this.audioContext = null;
         this.renderScheduled = false;
         this.selectedColor = 'blue';
+        this.soundEnabled = true;
         this.lastAlertTime = 0;
         this.wakeLock = null;
         this.init();
     }
 
     init() {
+        this.loadSettings();
         this.loadTimers();
         this.attachEventListeners();
         this.requestNotificationPermission();
@@ -122,6 +124,8 @@ class TimerApp {
         document.getElementById('addTimerBtn').addEventListener('click', () => this.addTimer());
         
         document.getElementById('toggleAddBtn').addEventListener('click', () => this.toggleAddPanel());
+        document.getElementById('soundToggleBtn').addEventListener('click', () => this.toggleSound());
+        this.updateSoundButton();
 
         // Color picker event listeners
         document.querySelectorAll('.color-option').forEach(button => {
@@ -218,6 +222,43 @@ class TimerApp {
     requestNotificationPermission() {
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission().catch(() => {});
+        }
+    }
+
+    toggleSound() {
+        this.soundEnabled = !this.soundEnabled;
+        this.saveSettings();
+        this.updateSoundButton();
+    }
+
+    updateSoundButton() {
+        const button = document.getElementById('soundToggleBtn');
+        if (!button) return;
+        button.textContent = this.soundEnabled ? 'Sound On' : 'Sound Off';
+        button.classList.toggle('active', this.soundEnabled);
+        button.setAttribute('aria-pressed', String(this.soundEnabled));
+    }
+
+    saveSettings() {
+        try {
+            localStorage.setItem('timerAppSettings', JSON.stringify({
+                soundEnabled: this.soundEnabled
+            }));
+        } catch (e) {
+            console.error('Error saving settings', e);
+        }
+    }
+
+    loadSettings() {
+        try {
+            const settings = localStorage.getItem('timerAppSettings');
+            if (!settings) return;
+            const data = JSON.parse(settings);
+            if (typeof data.soundEnabled === 'boolean') {
+                this.soundEnabled = data.soundEnabled;
+            }
+        } catch (e) {
+            console.error('Error loading settings', e);
         }
     }
 
@@ -381,6 +422,10 @@ class TimerApp {
     }
 
     playThrottledAlert() {
+        if (!this.soundEnabled) {
+            return;
+        }
+
         if (Date.now() - this.lastAlertTime >= 5000) {
             this.lastAlertTime = Date.now();
             this.playAlert();
@@ -402,9 +447,9 @@ class TimerApp {
         try {
             const now = this.audioContext.currentTime;
             // Three quick beeps (lower frequency)
-            this.playBeep(220, 100, now, 'triangle');
-            this.playBeep(440, 100, now + 0.15, 'sine');
-            this.playBeep(220, 100, now + 0.3, 'triangle');
+            this.playBeep(440, 100, now, 'triangle');
+            this.playBeep(440, 100, now + 0.15, 'triangle');
+            this.playBeep(440, 100, now + 0.3, 'triangle');
         } catch (e) {
             console.log('Error playing alert', e);
         }
