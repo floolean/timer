@@ -1,687 +1,715 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 :root {
-    --primary-color: #1e88e5;
-    --success-color: #43a047;
-    --warning-color: #fb8c00;
-    --danger-color: #e53935;
-    --dark: #121212;
-    --light: #f5f5f5;
-    --border: #e0e0e0;
-    --text-primary: #212121;
-    --text-secondary: #757575;
-    --color-blue: #1e88e5;
-    --color-red: #e53935;
-    --color-green: #43a047;
-    --color-orange: #fb8c00;
-    --color-purple: #8e24aa;
-    --color-pink: #d81b60;
-    --color-teal: #00897b;
-    --color-yellow: #fbc02d;
-    --color-blue-rgb: 30, 136, 229;
-    --color-red-rgb: 229, 57, 53;
-    --color-green-rgb: 67, 160, 71;
-    --color-orange-rgb: 251, 140, 0;
-    --color-purple-rgb: 142, 36, 170;
-    --color-pink-rgb: 216, 27, 96;
-    --color-teal-rgb: 0, 137, 123;
-    --color-yellow-rgb: 251, 192, 45;
+  --primary-color: #1e88e5;
+  --success-color: #43a047;
+  --warning-color: #fb8c00;
+  --danger-color: #e53935;
+  --dark: #121212;
+  --light: #f5f5f5;
+  --border: #e0e0e0;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --color-blue: #1e88e5;
+  --color-red: #e53935;
+  --color-green: #43a047;
+  --color-orange: #fb8c00;
+  --color-purple: #8e24aa;
+  --color-pink: #d81b60;
+  --color-teal: #00897b;
+  --color-yellow: #fbc02d;
+  --color-blue-rgb: 30, 136, 229;
+  --color-red-rgb: 229, 57, 53;
+  --color-green-rgb: 67, 160, 71;
+  --color-orange-rgb: 251, 140, 0;
+  --color-purple-rgb: 142, 36, 170;
+  --color-pink-rgb: 216, 27, 96;
+  --color-teal-rgb: 0, 137, 123;
+  --color-yellow-rgb: 251, 192, 45;
 }
 
-html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-    color: var(--text-primary);
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    min-height: 100vh;
-    padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 100vh;
+  padding: 0;
 }
 
 .container {
-    width: 100%;
-    max-width: 600px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: white;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header {
-    padding: max(env(safe-area-inset-top), 12px) 16px 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+  padding: max(env(safe-area-inset-top), 12px) 16px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .header h1 {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--primary-color);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary-color);
 }
 
 .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .btn-sound-toggle {
-    min-width: 88px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: white;
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    touch-action: manipulation;
+  min-width: 88px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  touch-action: manipulation;
 }
 
 .btn-sound-toggle.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
 }
 
 .btn-sound-toggle:active {
-    transform: scale(0.97);
+  transform: scale(0.97);
 }
 
 .btn-toggle-add {
-    min-width: 84px;
-    padding: 10px 16px;
-    border-radius: 14px;
-    border: none;
-    background: var(--primary-color);
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, background 0.2s ease;
-    touch-action: manipulation;
+  min-width: 84px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+  touch-action: manipulation;
 }
 
 .btn-toggle-add:active {
-    transform: scale(0.97);
-    background: #1565c0;
+  transform: scale(0.97);
+  background: #1565c0;
 }
 
 .main {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .timers-list {
-    display: grid;
-    gap: 12px;
-    margin-bottom: 16px;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .empty-state {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-secondary);
 }
 
 .empty-state p:first-child {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 .empty-hint {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 /* Timer Card */
 .timer-card {
-    background: white;
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    transition: all 0.25s ease;
-    touch-action: manipulation;
-    position: relative;
-    min-height: 118px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    align-items: stretch;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  transition: all 0.25s ease;
+  touch-action: manipulation;
+  position: relative;
+  min-height: 118px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  align-items: stretch;
 }
 
 .timer-card.idle {
-    border-color: #d0d0d0;
+  border-color: #d0d0d0;
 }
 
 .timer-card.active {
-    border-color: #616161;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border-color: #616161;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .timer-card.blinking {
-    border-color: var(--timer-color);
-    background: rgba(var(--timer-color-rgb), 0.1);
-    animation: timerBlink 0.6s ease-in-out infinite;
-    pointer-events: auto;
+  border-color: var(--timer-color);
+  background: rgba(var(--timer-color-rgb), 0.1);
+  animation: timerBlink 0.6s ease-in-out infinite;
+  pointer-events: auto;
 }
 
 .timer-card.blinking * {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .timer-card.acknowledged {
-    border-color: var(--danger-color);
-    background: #fff3e0;
-    animation: none;
+  border-color: var(--danger-color);
+  background: #fff3e0;
+  animation: none;
 }
 
 @keyframes timerBlink {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .timer-delete-btn {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.95);
-    color: var(--text-secondary);
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    touch-action: manipulation;
-    z-index: 30;
+  position: absolute;
+  top: 0px;
+  left: 5px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  z-index: 30;
 }
 
 .timer-delete-btn:active {
-    background: rgba(233, 30, 99, 0.2);
-    color: var(--danger-color);
+  background: rgba(233, 30, 99, 0.2);
+  color: var(--danger-color);
 }
 
 .timer-strip {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 6px;
-    border-radius: 4px 0 0 4px;
-    background: var(--timer-color, var(--primary-color));
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  border-radius: 4px 0 0 4px;
+  background: var(--timer-color, var(--primary-color));
 }
 
 .timer-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-    position: relative;
-    padding-left: 16px;
-    padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  position: relative;
+  padding-left: 16px;
+  padding-right: 20px;
 }
 
 .timer-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0 0 10px;
-    text-align: center;
-    line-height: 1.2;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .timer-sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-width: 100px;
 }
 
 .timer-reset-btn {
-    border: none;
-    background: #f2f2f2;
-    color: var(--text-primary);
-    border-radius: 18px;
-    width: 90px;
-    min-height: 44px;
-    padding: 14px 0;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.15s ease;
-    touch-action: manipulation;
+  border: none;
+  background: #f2f2f2;
+  color: var(--text-primary);
+  border-radius: 18px;
+  width: 90px;
+  min-height: 44px;
+  padding: 14px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  touch-action: manipulation;
 }
 
 .timer-reset-btn:hover {
-    background: #e0e0e0;
+  background: #e0e0e0;
 }
 
 .timer-reset-btn:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 .timer-reset-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    background: #f4f4f4;
-    color: #8c8c8c;
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #f4f4f4;
+  color: #8c8c8c;
 }
 
 
 .timer-display {
-    font-size: 42px;
-    font-weight: 700;
-    font-family: 'Monaco', 'Courier New', monospace;
-    letter-spacing: 1.8px;
-    color: #262626;
-    text-align: center;
-    margin: 0;
-    transition: color 0.3s ease;
+  font-size: 42px;
+  font-weight: 700;
+  font-family: 'Monaco', 'Courier New', monospace;
+  letter-spacing: 1.8px;
+  color: #262626;
+  text-align: center;
+  margin: 0;
+  transition: color 0.3s ease;
 }
 
 .timer-card.idle .timer-display {
-    color: #9e9e9e;
+  color: #9e9e9e;
 }
 
 .timer-card.blinking .timer-display {
-    color: var(--danger-color);
+  color: var(--danger-color);
 }
 
 .timer-card.acknowledged .timer-display {
-    color: var(--warning-color);
+  color: var(--warning-color);
 }
 
 .timer-action-btn {
-    border: none;
-    border-radius: 18px;
-    background: var(--primary-color);
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    touch-action: manipulation;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 90px;
-    height: 90px;
-    position: relative;
-    z-index: 10;
-    pointer-events: auto;
+  border: none;
+  border-radius: 18px;
+  background: var(--primary-color);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  touch-action: manipulation;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .timer-reset-btn,
 .timer-action-btn {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .timer-action-btn:active {
-    transform: scale(0.95);
-    opacity: 0.9;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
+  transform: scale(0.95);
+  opacity: 0.9;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
 }
 
 .timer-action-btn.btn-start {
-    background: var(--primary-color);
+  background: var(--primary-color);
 }
 
 .timer-action-btn.btn-pause {
-    background: #43a047;
+  background: #43a047;
 }
 
 .timer-action-btn.btn-reset {
-    background: var(--danger-color);
+  background: var(--danger-color);
 }
 
 .timer-card.blinking .timer-action-btn {
-    background: var(--danger-color);
+  background: var(--danger-color);
 }
 
 .btn {
-    flex: 1;
-    padding: 10px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    touch-action: manipulation;
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  touch-action: manipulation;
 }
 
 .btn-small {
-    flex: 0;
-    padding: 8px 10px;
-    font-size: 12px;
+  flex: 0;
+  padding: 8px 10px;
+  font-size: 12px;
 }
 
 .btn-primary {
-    background: var(--primary-color);
-    color: white;
+  background: var(--primary-color);
+  color: white;
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
-    opacity: 0.9;
+  transform: scale(0.98);
+  opacity: 0.9;
 }
 
 .btn-secondary {
-    background: var(--light);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
+  background: var(--light);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
 .btn-secondary:active {
-    background: #eeeeee;
+  background: #eeeeee;
 }
 
 .btn-danger {
-    background: var(--danger-color);
-    color: white;
+  background: var(--danger-color);
+  color: white;
 }
 
 .btn-danger:active {
-    background: #d32f2f;
+  background: #d32f2f;
 }
 
 .btn-success {
-    background: var(--success-color);
-    color: white;
+  background: var(--success-color);
+  color: white;
 }
 
 .btn-success:active {
-    background: #388e3c;
+  background: #388e3c;
 }
 
 /* Add Timer Section */
 .add-timer-section {
-    border-top: 1px solid var(--border);
-    padding: 16px;
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-    background: var(--light);
-    display: none;
-    flex-direction: column;
-    gap: 16px;
-    animation: slideUp 0.3s ease;
+  border-top: 1px solid var(--border);
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: var(--light);
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.3s ease;
 }
 
 .time-picker {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .time-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .time-field label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-weight: 700;
-    letter-spacing: 0.08em;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .timer-time-input {
-    width: 100%;
-    min-width: 0;
-    padding: 14px 12px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    font-size: 16px;
-    text-align: center;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 16px;
+  text-align: center;
 }
 
 .color-panel {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .color-label {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .color-picker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .color-option {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: transform 0.15s ease, border-color 0.15s ease;
-    background: gray;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  background: gray;
 }
 
-.color-option[data-color="blue"] { background: var(--color-blue); }
-.color-option[data-color="red"] { background: var(--color-red); }
-.color-option[data-color="green"] { background: var(--color-green); }
-.color-option[data-color="orange"] { background: var(--color-orange); }
-.color-option[data-color="purple"] { background: var(--color-purple); }
-.color-option[data-color="pink"] { background: var(--color-pink); }
-.color-option[data-color="teal"] { background: var(--color-teal); }
-.color-option[data-color="yellow"] { background: var(--color-yellow); }
+.color-option[data-color="blue"] {
+  background: var(--color-blue);
+}
+
+.color-option[data-color="red"] {
+  background: var(--color-red);
+}
+
+.color-option[data-color="green"] {
+  background: var(--color-green);
+}
+
+.color-option[data-color="orange"] {
+  background: var(--color-orange);
+}
+
+.color-option[data-color="purple"] {
+  background: var(--color-purple);
+}
+
+.color-option[data-color="pink"] {
+  background: var(--color-pink);
+}
+
+.color-option[data-color="teal"] {
+  background: var(--color-teal);
+}
+
+.color-option[data-color="yellow"] {
+  background: var(--color-yellow);
+}
 
 .color-option.selected {
-    transform: scale(1.05);
-    border-color: rgba(0,0,0,0.15);
+  transform: scale(1.05);
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
 .timer-name-input {
-    width: 100%;
-    padding: 14px 14px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    font-size: 16px;
+  width: 100%;
+  padding: 14px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-size: 16px;
 }
 
 .timer-name-input:focus,
 .timer-time-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
 }
 
 .add-timer-section.active {
-    display: flex;
+  display: flex;
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .input-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .timer-name-input,
 .timer-time-input {
-    font-family: inherit;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .timer-name-input {
-    flex: 1;
+  flex: 1;
 }
 
 .timer-time-input {
-    width: 100%;
-    min-width: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .timer-name-input:focus,
 .timer-time-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
 }
 
 .separator {
-    font-weight: 700;
-    font-size: 16px;
-    padding: 0 2px;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 0 2px;
 }
 
 /* Scrolling */
 .main::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .main::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .main::-webkit-scrollbar-thumb {
-    background: #d0d0d0;
-    border-radius: 3px;
+  background: #d0d0d0;
+  border-radius: 3px;
 }
 
 /* Mobile optimizations */
 @media (max-height: 600px) {
-    .timer-display {
-        font-size: 36px;
-    }
-    
-    .timer-card {
-        min-height: 120px;
-    }
+  .timer-display {
+    font-size: 36px;
+  }
 
-    .timer-action-btn {
-        width: 70px;
-        height: 70px;
-        font-size: 12px;
-    }
+  .timer-card {
+    min-height: 120px;
+  }
 
-    .timer-reset-btn {
-        width: 70px;
-        font-size: 12px;
-    }
+  .timer-action-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 12px;
+  }
+
+  .timer-reset-btn {
+    width: 70px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 800px) {
-    .timer-display {
-        font-size: 28px;
-    }
+  .timer-display {
+    font-size: 28px;
+  }
 
-    .timer-name {
-        font-size: 14px;
-    }
+  .timer-name {
+    font-size: 14px;
+  }
 
-    .timer-card {
-        min-height: 108px;
-        padding: 12px;
-        padding-right: 0px;
-    }
+  .timer-card {
+    min-height: 108px;
+    padding: 12px;
+    padding-right: 0px;
+  }
 
-    .timer-info {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
+  .timer-info {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
 
-    .timer-sidebar {
-        min-width: 88px;
-    }
+  .timer-sidebar {
+    min-width: 88px;
+  }
 
-    .timer-action-btn {
-        width: 62px;
-        height: 62px;
-        font-size: 12px;
-    }
+  .timer-action-btn {
+    width: 62px;
+    height: 62px;
+    font-size: 12px;
+  }
 
-    .timer-reset-btn {
-        width: 62px;
-        min-height: 40px;
-        padding: 10px 0;
-        font-size: 12px;
-    }
+  .timer-reset-btn {
+    width: 62px;
+    min-height: 40px;
+    padding: 10px 0;
+    font-size: 12px;
+  }
 }
 
 @media (orientation: landscape) and (max-width: 1200px) {
-    .timers-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .timers-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-    .header {
-        display: none;
-    }
+  .header {
+    display: none;
+  }
 
-    .container {
-        max-width: none;
-    }
+  .container {
+    max-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
