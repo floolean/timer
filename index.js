@@ -354,7 +354,7 @@ class TimerApp {
 			body:
 				timer.remainingSeconds < 0
 					? `Overtime ${timer.getDisplayTime()}`
-					: "Time is up!",
+					: `"${timer.name}" is up!`,
 			tag: `timer-${timer.id}`,
 			renotify: true,
 			silent: true,
