@@ -627,7 +627,7 @@ body {
     }
 }
 
-@media (max-width: 460px) {
+@media (max-width: 800px) {
     .timer-display {
         font-size: 28px;
     }
@@ -664,7 +664,7 @@ body {
     }
 }
 
-@media (orientation: landscape) and (min-width: 600px) {
+@media (orientation: landscape) and (max-width: 1200px) {
     .timers-list {
         grid-template-columns: repeat(2, 1fr);
     }
