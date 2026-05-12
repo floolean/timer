@@ -148,8 +148,12 @@ body {
     align-items: stretch;
 }
 
+.timer-card.idle {
+    border-color: #d0d0d0;
+}
+
 .timer-card.active {
-    border-color: var(--timer-color, var(--primary-color));
+    border-color: #616161;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
