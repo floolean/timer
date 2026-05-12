@@ -287,6 +287,10 @@ body {
     transition: color 0.3s ease;
 }
 
+.timer-card.idle .timer-display {
+    color: #9e9e9e;
+}
+
 .timer-card.blinking .timer-display {
     color: var(--danger-color);
 }

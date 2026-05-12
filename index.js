@@ -135,33 +135,45 @@ class TimerApp {
             this.selectColor(this.selectedColor);
         }
 
-        // Use event delegation for timer buttons - handle both click and touch
+        // Use event delegation for timer buttons and cards
         const handleButtonClick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const button = e.target.closest('button');
-            if (!button || button.disabled) return;
-            
-            const timerId = parseInt(button.dataset.timerId);
-            const action = button.dataset.action;
-            
-            if (action === 'delete') {
-                this.deleteTimer(timerId);
-            } else if (action === 'action') {
+            const card = e.target.closest('.timer-card');
+
+            if (button && !button.disabled) {
+                const timerId = parseInt(button.dataset.timerId);
+                const action = button.dataset.action;
+
+                if (action === 'delete') {
+                    this.deleteTimer(timerId);
+                } else if (action === 'action') {
+                    const timer = this.timers.find(t => t.id === timerId);
+                    if (!timer) return;
+
+                    const status = timer.getStatus();
+                    const isTimedOut = status === 'blinking';
+
+                    if (isTimedOut) {
+                        this.resetTimer(timerId);
+                    } else {
+                        this.toggleTimer(timerId);
+                    }
+                } else if (action === 'reset') {
+                    this.resetTimer(timerId);
+                }
+            } else if (card) {
+                const timerId = parseInt(card.dataset.timerId);
                 const timer = this.timers.find(t => t.id === timerId);
                 if (!timer) return;
-                
-                const status = timer.getStatus();
-                const isTimedOut = status === 'blinking';
-                
-                if (isTimedOut) {
+
+                if (timer.remainingSeconds <= 0) {
                     this.resetTimer(timerId);
-                } else {
+                } else if (!timer.isRunning && timer.remainingSeconds === timer.totalSeconds) {
                     this.toggleTimer(timerId);
                 }
-            } else if (action === 'reset') {
-                this.resetTimer(timerId);
             }
         };
 
