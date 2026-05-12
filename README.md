@@ -12,7 +12,6 @@ A simple, elegant Progressive Web App for managing multiple timers on your iPhon
 💾 **Persistent Storage** - Timers are saved locally and persist between sessions
 📱 **Offline Support** - Works completely offline with service worker caching
 🍎 **iPhone Optimized** - Install as standalone app on your home screen
-🎯 **One Timer at a Time** - Only one timer runs at a time for simplicity
 
 ## Installation
 
