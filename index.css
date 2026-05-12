@@ -193,7 +193,7 @@ body {
 .timer-card.blinking {
     border-color: var(--timer-color);
     background: rgba(var(--timer-color-rgb), 0.1);
-    animation: timerBlink 0.8s ease-in-out infinite;
+    animation: timerBlink 0.6s ease-in-out infinite;
     pointer-events: auto;
 }
 
