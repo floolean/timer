@@ -638,7 +638,7 @@ class TimerApp {
                     </div>
                     <div class="timer-sidebar">
                         <button class="timer-action-btn ${buttonClass}" data-action="action" data-timer-id="${timer.id}">${buttonLabel}</button>
-                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${timer.isRunning ? "disabled" : ""}>Reset</button>
+                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${timer.isRunning ? "disabled" : ""}>RESET</button>
                     </div>
                 </div>
                 `;
