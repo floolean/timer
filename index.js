@@ -124,6 +124,7 @@ class TimerApp {
 		this.audioContext = null;
 		this.selectedColor = "blue";
 		this.soundEnabled = true;
+		this.soundStyle = "beep"; // beep | chime | bell | blip
 		this.lastAlertTime = 0;
 		this.wakeLock = null;
 		this.init();
@@ -157,7 +158,11 @@ class TimerApp {
 		document
 			.getElementById("soundToggleBtn")
 			.addEventListener("click", () => this.toggleSound());
+		document
+			.getElementById("soundStyleBtn")
+			.addEventListener("click", () => this.cycleSoundStyle());
 		this.updateSoundButton();
+		this.updateSoundStyleButton();
 
 		// Color picker event listeners
 		document.querySelectorAll(".color-option").forEach((button) => {
@@ -241,8 +246,14 @@ class TimerApp {
 			});
 
 		document.addEventListener("visibilitychange", () => {
-			if (document.visibilityState === "visible") {
+			if (document.visibilityState === "hidden") {
+				// Let the browser discard it cleanly; will be recreated on next user gesture
+				this.audioContext = null;
+			} else {
 				this.requestWakeLock();
+				if (this.audioContext && this.audioContext.state === "suspended") {
+					this.audioContext.resume().catch(() => {});
+				}
 			}
 		});
 
@@ -270,6 +281,24 @@ class TimerApp {
 		this.updateSoundButton();
 	}
 
+	cycleSoundStyle() {
+		const styles = ["beep", "chime", "bell", "blip"];
+		const idx = styles.indexOf(this.soundStyle);
+		this.soundStyle = styles[(idx + 1) % styles.length];
+		this.saveSettings();
+		this.updateSoundStyleButton();
+		// Play a preview so user hears the new style
+		this.initAudioContext();
+		this.playAlert();
+	}
+
+	updateSoundStyleButton() {
+		const button = document.getElementById("soundStyleBtn");
+		if (!button) return;
+		const labels = { beep: "Beep", chime: "Chime", bell: "Bell", blip: "Blip" };
+		button.textContent = labels[this.soundStyle] || "Beep";
+	}
+
 	toggleTheme() {
 		const html = document.documentElement;
 		const isLight = html.getAttribute("data-theme") === "light";
@@ -293,6 +322,7 @@ class TimerApp {
 				"timerAppSettings",
 				JSON.stringify({
 					soundEnabled: this.soundEnabled,
+					soundStyle: this.soundStyle,
 					theme: document.documentElement.getAttribute("data-theme") || "dark",
 				}),
 			);
@@ -308,6 +338,9 @@ class TimerApp {
 			const data = JSON.parse(settings);
 			if (typeof data.soundEnabled === "boolean") {
 				this.soundEnabled = data.soundEnabled;
+			}
+			if (["beep", "chime", "bell", "blip"].includes(data.soundStyle)) {
+				this.soundStyle = data.soundStyle;
 			}
 			if (data.theme === "light") {
 				document.documentElement.setAttribute("data-theme", "light");
@@ -513,7 +546,6 @@ class TimerApp {
 	}
 
 	playAlert() {
-		// Try to create sound with Web Audio API
 		if (!this.audioContext) {
 			try {
 				const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -526,13 +558,50 @@ class TimerApp {
 
 		try {
 			const now = this.audioContext.currentTime;
-			// Three quick beeps (lower frequency)
-			this.playBeep(520, 300, now, "square");
-			this.playBeep(520, 500, now + 0.15, "square");
-			//this.playBeep(880, 100, now + 0.2, "square");
+			switch (this.soundStyle) {
+				case "chime":  this.playChime(now);  break;
+				case "bell":   this.playBell(now);   break;
+				case "blip":   this.playBlip(now);   break;
+				default:       this.playBeeps(now);  break;
+			}
 		} catch (e) {
 			console.log("Error playing alert", e);
 		}
+	}
+
+	// Original: two square-wave beeps
+	playBeeps(now) {
+		this.playBeep(520, 300, now, "square");
+		this.playBeep(520, 500, now + 0.15, "square");
+	}
+
+	// C-E-G sine chime
+	playChime(now) {
+		this.playBeep(523, 400, now,       "sine");
+		this.playBeep(659, 400, now + 0.18,"sine");
+		this.playBeep(784, 600, now + 0.36,"sine");
+	}
+
+	// Single tone with long decay
+	playBell(now) {
+		const ctx = this.audioContext;
+		const osc = ctx.createOscillator();
+		const gain = ctx.createGain();
+		osc.connect(gain);
+		gain.connect(ctx.destination);
+		osc.frequency.value = 880;
+		osc.type = "sine";
+		gain.gain.setValueAtTime(0.001, now);
+		gain.gain.exponentialRampToValueAtTime(0.3, now + 0.01);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + 2.0);
+		osc.start(now);
+		osc.stop(now + 2.0);
+	}
+
+	// Short subtle sine pulse
+	playBlip(now) {
+		this.playBeep(1047, 80, now, "sine");
+		this.playBeep(1047, 80, now + 0.12, "sine");
 	}
 
 	playBeep(frequency, duration, startTime, type = "sine") {
