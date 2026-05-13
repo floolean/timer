@@ -141,6 +141,10 @@ class TimerApp {
 		const themeBtn = document.getElementById("themeToggleBtn");
 		if (themeBtn) themeBtn.textContent = isLight ? "☾" : "☀︎";
 		this.render();
+
+		if (this.soundEnabled && this.timers.some(t => t.isRunning)) {
+			this.showAudioNudge();
+		}
 	}
 
 	attachEventListeners() {
@@ -164,8 +168,8 @@ class TimerApp {
 		this.updateSoundButton();
 		this.updateSoundStyleButton();
 
-		document.getElementById("audioNudgeBtn").addEventListener("click", () => {
-			this.initAudioContext();
+		document.getElementById("audioNudgeBtn").addEventListener("click", async () => {
+			await this.initAudioContext();
 			this.hideAudioNudge();
 		});
 
@@ -250,22 +254,25 @@ class TimerApp {
 				if (e.key === "Enter") this.addTimer();
 			});
 
+		const handleForeground = () => {
+			this.requestWakeLock();
+			const hasRunning = this.timers.some(t => t.isRunning);
+			const audioReady = this.audioContext && this.audioContext.state === "running";
+			if (this.soundEnabled && hasRunning && !audioReady) {
+				this.showAudioNudge();
+			}
+		};
+
 		document.addEventListener("visibilitychange", () => {
 			if (document.visibilityState === "hidden") {
-				// Let the browser discard it cleanly; will be recreated on next user gesture
 				this.audioContext = null;
 			} else {
-				this.requestWakeLock();
-				if (this.audioContext && this.audioContext.state === "suspended") {
-					this.audioContext.resume().catch(() => {});
-				}
-				// Show nudge if sound is on, audio context is gone, and a timer is running
-				const hasRunning = this.timers.some(t => t.isRunning);
-				if (this.soundEnabled && hasRunning && !this.audioContext) {
-					this.showAudioNudge();
-				}
+				handleForeground();
 			}
 		});
+
+		// iOS sometimes fires pageshow instead of visibilitychange when restoring from background
+		window.addEventListener("pageshow", handleForeground);
 
 		document.addEventListener("click", () => this.requestWakeLock());
 		document.addEventListener("touchend", () => this.requestWakeLock());
@@ -301,14 +308,13 @@ class TimerApp {
 		this.updateSoundButton();
 	}
 
-	cycleSoundStyle() {
+	async cycleSoundStyle() {
 		const styles = ["beep", "chime", "bell", "blip"];
 		const idx = styles.indexOf(this.soundStyle);
 		this.soundStyle = styles[(idx + 1) % styles.length];
 		this.saveSettings();
 		this.updateSoundStyleButton();
-		// Play a preview so user hears the new style
-		this.initAudioContext();
+		await this.initAudioContext();
 		this.playAlert();
 	}
 
@@ -370,24 +376,40 @@ class TimerApp {
 		}
 	}
 
-	initAudioContext() {
-		if (!window.AudioContext && !window.webkitAudioContext) {
-			return;
-		}
+	async initAudioContext() {
+		const AC = window.AudioContext || window.webkitAudioContext;
+		if (!AC) return;
 
-		if (!this.audioContext) {
+		if (!this.audioContext || this.audioContext.state === "closed") {
 			try {
-				const AudioContext = window.AudioContext || window.webkitAudioContext;
-				this.audioContext = new AudioContext();
+				this.audioContext = new AC();
 			} catch (e) {
-				console.log("AudioContext initialization failed", e);
 				return;
 			}
 		}
 
-		if (this.audioContext.state === "suspended") {
-			this.audioContext.resume().catch(() => {});
+		if (this.audioContext.state !== "running") {
+			try {
+				await this.audioContext.resume();
+			} catch (e) {
+				// Resume failed — recreate from scratch
+				try {
+					this.audioContext = new AC();
+					await this.audioContext.resume();
+				} catch (e2) {
+					return;
+				}
+			}
 		}
+
+		// iOS requires scheduling actual audio to fully unlock the context
+		try {
+			const buf = this.audioContext.createBuffer(1, 1, this.audioContext.sampleRate);
+			const src = this.audioContext.createBufferSource();
+			src.buffer = buf;
+			src.connect(this.audioContext.destination);
+			src.start(0);
+		} catch (e) {}
 	}
 
 	async requestWakeLock() {

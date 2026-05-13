@@ -4,14 +4,15 @@ A simple, elegant Progressive Web App for managing multiple timers on your iPhon
 
 ## Features
 
-✨ **Multiple Timers** - Create and manage unlimited timers simultaneously
+✨ **Multiple Timers** - Create and manage unlimited concurrent timers
 ⏱ **HH:MM:SS Format** - Support for hours, minutes, and seconds
-📝 **Named Timers** - Give each timer a meaningful name
-🔊 **Audio Alerts** - Three beeps when timer reaches zero
-👁️ **Visual Feedback** - Color-coded timer status (active, completed, overtime)
-💾 **Persistent Storage** - Timers are saved locally and persist between sessions
+📝 **Named Timers** - Give each timer a meaningful name, pick a color
+🔊 **Sound Style Picker** - Cycle between Beep, Chime, Bell, and Blip alerts
+👁️ **Visual Feedback** - Color-coded timer status; timers continue into overtime
+💾 **Persistent Storage** - Timers and settings saved locally, survive page reload
 📱 **Offline Support** - Works completely offline with service worker caching
 🍎 **iPhone Optimized** - Install as standalone app on your home screen
+🌙 **Dark / Light Theme** - Toggle with the sun/moon button, persisted across sessions
 
 ## Installation
 
@@ -46,28 +47,26 @@ A simple, elegant Progressive Web App for managing multiple timers on your iPhon
 - **Start/Pause** - Toggle timer playback with the Start/Pause button
 - **Reset** - Return timer to its original duration
 - **Delete** - Remove a timer permanently
-- A timer will display in **orange** at zero and continue into negative time (overtime)
+- A timer turns amber at zero and continues into **negative overtime** — tap Reset to stop it
 
 ### Multiple Timers
-- Only one timer can run at a time
-- Starting a new timer automatically pauses any running timer
+- Multiple timers can run concurrently
 - All timers are saved automatically to your device
 
 ## Technical Details
 
-- **Pure JavaScript** - No dependencies, lightweight (~30KB)
-- **Service Worker** - Enables offline functionality
-- **localStorage** - Persists timer data locally
-- **Web Audio API** - Generates audio alerts
-- **Responsive Design** - Works on any screen size
+- **Pure JavaScript** - No framework, no build step, lightweight
+- **Service Worker** - Enables offline functionality and PWA install
+- **localStorage** - Persists timers and settings locally
+- **Web Audio API** - Procedurally generated alerts (no audio files)
+- **Responsive Design** - Two-column grid in landscape, single-column in portrait
 - **Mobile Optimized** - Supports safe area insets for notched devices
 
 ## Tips
 
 💡 **Keyboard Support** - Press Enter to quickly add a timer after filling in the fields
-💡 **Running Timers** - Keep the app running in the background for audio alerts
+💡 **iOS Audio** - If sound stops after switching apps, tap the "Restore sound" prompt that appears
 💡 **Data Privacy** - All data stays on your device; nothing is sent to servers
-💡 **Multiple Instances** - You can have multiple timers running by opening the app in multiple browser tabs/windows
 
 ## Browser Support
 
@@ -83,13 +82,12 @@ This is a vanilla JavaScript PWA with no build process required. Just serve the 
 
 ### File Structure
 ```
-/Users/alex/dev/timer_app/
-├── index.html          # Main HTML file
+├── index.html          # Main HTML
 ├── index.css           # Styling
 ├── index.js            # App logic
 ├── manifest.json       # PWA manifest
-├── service-worker.js   # Offline support
-└── README.md          # This file
+├── service-worker.js   # Offline support / notifications
+└── CLAUDE.md           # AI assistant context
 ```
 
 ### To Run Locally
