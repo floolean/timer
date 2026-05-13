@@ -254,11 +254,24 @@ class TimerApp {
 				if (this.audioContext && this.audioContext.state === "suspended") {
 					this.audioContext.resume().catch(() => {});
 				}
+				// Show nudge if sound is on, audio context is gone, and a timer is running
+				const hasRunning = this.timers.some(t => t.isRunning);
+				if (this.soundEnabled && hasRunning && !this.audioContext) {
+					this.showAudioNudge();
+				}
 			}
 		});
 
-		document.addEventListener("click", () => this.requestWakeLock());
-		document.addEventListener("touchend", () => this.requestWakeLock());
+		document.addEventListener("click", () => {
+			this.requestWakeLock();
+			this.initAudioContext();
+			this.hideAudioNudge();
+		});
+		document.addEventListener("touchend", () => {
+			this.requestWakeLock();
+			this.initAudioContext();
+			this.hideAudioNudge();
+		});
 	}
 
 	selectColor(color) {
@@ -273,6 +286,16 @@ class TimerApp {
 		if ("Notification" in window && Notification.permission === "default") {
 			Notification.requestPermission().catch(() => {});
 		}
+	}
+
+	showAudioNudge() {
+		const nudge = document.getElementById("audioNudge");
+		if (nudge) nudge.classList.add("visible");
+	}
+
+	hideAudioNudge() {
+		const nudge = document.getElementById("audioNudge");
+		if (nudge) nudge.classList.remove("visible");
 	}
 
 	toggleSound() {

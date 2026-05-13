@@ -229,6 +229,28 @@ body {
   background: #d48e1a;
 }
 
+.audio-nudge {
+  display: none;
+  background: var(--accent-dim);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.25);
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 16px;
+  animation: nudgePulse 2s ease-in-out infinite;
+}
+
+.audio-nudge.visible { display: block; }
+
+@keyframes nudgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* ─── MAIN ─────────────────────────────────── */
 .main {
   flex: 1;
