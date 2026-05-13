@@ -164,6 +164,11 @@ class TimerApp {
 		this.updateSoundButton();
 		this.updateSoundStyleButton();
 
+		document.getElementById("audioNudgeBtn").addEventListener("click", () => {
+			this.initAudioContext();
+			this.hideAudioNudge();
+		});
+
 		// Color picker event listeners
 		document.querySelectorAll(".color-option").forEach((button) => {
 			button.addEventListener("click", (e) => {
@@ -262,16 +267,8 @@ class TimerApp {
 			}
 		});
 
-		document.addEventListener("click", () => {
-			this.requestWakeLock();
-			this.initAudioContext();
-			this.hideAudioNudge();
-		});
-		document.addEventListener("touchend", () => {
-			this.requestWakeLock();
-			this.initAudioContext();
-			this.hideAudioNudge();
-		});
+		document.addEventListener("click", () => this.requestWakeLock());
+		document.addEventListener("touchend", () => this.requestWakeLock());
 	}
 
 	selectColor(color) {

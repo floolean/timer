@@ -26,7 +26,14 @@
             </div>
         </header>
 
-        <div id="audioNudge" class="audio-nudge" aria-live="polite">Tap anywhere to restore sound</div>
+        <div id="audioNudge" class="audio-nudge" role="dialog" aria-modal="true" aria-label="Restore sound">
+            <div class="audio-nudge-content">
+                <div class="audio-nudge-icon">🔇</div>
+                <p class="audio-nudge-title">Sound paused</p>
+                <p class="audio-nudge-sub">The browser suspended audio while the app was in the background.</p>
+                <button id="audioNudgeBtn" class="audio-nudge-btn" type="button">Restore sound</button>
+            </div>
+        </div>
 
         <main class="main">
             <!-- Timers list -->
