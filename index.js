@@ -135,6 +135,10 @@ class TimerApp {
 		this.attachEventListeners();
 		this.requestNotificationPermission();
 		this.requestWakeLock();
+		// Sync theme button icon with loaded theme
+		const isLight = document.documentElement.getAttribute("data-theme") === "light";
+		const themeBtn = document.getElementById("themeToggleBtn");
+		if (themeBtn) themeBtn.textContent = isLight ? "☾" : "☀︎";
 		this.render();
 	}
 
@@ -142,6 +146,10 @@ class TimerApp {
 		document
 			.getElementById("addTimerBtn")
 			.addEventListener("click", () => this.addTimer());
+
+		document
+			.getElementById("themeToggleBtn")
+			.addEventListener("click", () => this.toggleTheme());
 
 		document
 			.getElementById("toggleAddBtn")
@@ -171,7 +179,7 @@ class TimerApp {
 			const button = e.target.closest("button");
 			const card = e.target.closest(".timer-card");
 
-			if (button && !button.disabled) {
+			if (button && (!button.disabled || button.dataset.action === "reset")) {
 				const timerId = parseInt(button.dataset.timerId);
 				const action = button.dataset.action;
 
@@ -262,6 +270,15 @@ class TimerApp {
 		this.updateSoundButton();
 	}
 
+	toggleTheme() {
+		const html = document.documentElement;
+		const isLight = html.getAttribute("data-theme") === "light";
+		html.setAttribute("data-theme", isLight ? "dark" : "light");
+		const btn = document.getElementById("themeToggleBtn");
+		if (btn) btn.textContent = isLight ? "☀︎" : "☾";
+		this.saveSettings();
+	}
+
 	updateSoundButton() {
 		const button = document.getElementById("soundToggleBtn");
 		if (!button) return;
@@ -276,6 +293,7 @@ class TimerApp {
 				"timerAppSettings",
 				JSON.stringify({
 					soundEnabled: this.soundEnabled,
+					theme: document.documentElement.getAttribute("data-theme") || "dark",
 				}),
 			);
 		} catch (e) {
@@ -290,6 +308,9 @@ class TimerApp {
 			const data = JSON.parse(settings);
 			if (typeof data.soundEnabled === "boolean") {
 				this.soundEnabled = data.soundEnabled;
+			}
+			if (data.theme === "light") {
+				document.documentElement.setAttribute("data-theme", "light");
 			}
 		} catch (e) {
 			console.error("Error loading settings", e);
@@ -638,7 +659,7 @@ class TimerApp {
                     </div>
                     <div class="timer-sidebar">
                         <button class="timer-action-btn ${buttonClass}" data-action="action" data-timer-id="${timer.id}">${buttonLabel}</button>
-                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}" ${timer.isRunning ? "disabled" : ""}>RESET</button>
+                        <button class="timer-reset-btn" data-action="reset" data-timer-id="${timer.id}">RESET</button>
                     </div>
                 </div>
                 `;
