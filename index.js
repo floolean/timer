@@ -142,7 +142,10 @@ class TimerApp {
 		if (themeBtn) themeBtn.textContent = isLight ? "☾" : "☀︎";
 		this.render();
 
-		if (this.soundEnabled && this.timers.some(t => t.isRunning)) {
+		// On iOS the page may start hidden (splash screen); skip now and let
+		// the visibilitychange → handleForeground path show the nudge once visible.
+		if (document.visibilityState === "visible" &&
+			this.soundEnabled && this.timers.some(t => t.isRunning)) {
 			this.showAudioNudge();
 		}
 	}
